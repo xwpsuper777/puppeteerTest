@@ -48,7 +48,12 @@ async function goto(url) {
 
   const page = await browser.newPage();
 
-
+  const client = await page.target().createCDPSession();
+  await client.send('Page.setDownloadBehavior', {
+    behavior: 'allow',
+    downloadPath: downloadPath,
+  });
+  
   // 设置页面的默认超时时间为 60 秒（60000 毫秒）
   page.setDefaultTimeout(60000); // 60 秒
 
