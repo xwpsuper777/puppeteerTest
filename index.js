@@ -29,6 +29,10 @@ async function goto(url) {
   });
 
   const page = await browser.newPage();
+  
+  // 设置页面的默认超时时间为 60 秒（60000 毫秒）
+  page.setDefaultTimeout(60000); // 60 秒
+  
   // 监听浏览器中的所有页面/标签
   const pages = [page];
   browser.on('targetcreated', async target => {
@@ -47,7 +51,7 @@ async function goto(url) {
     width: 1200,
     height: 800,
   });
-  await sleep(10)
+  await sleep(3)
   await page.waitForSelector('#submitBtn > div.btn_center > div > div')
   // 账号
   await page.locator("input[name='userid']").fill('xuweip0')
@@ -56,7 +60,7 @@ async function goto(url) {
   // 点击登录
   await page.click("#submitBtn > div.btn_center > div > div");
   // 登陆成功
-  await sleep(90)
+  await sleep(30)
 
   await page.locator('#weberm_MyExpBillPortlet_weberm_myExpBillFunPortlet_iframe').wait();
   // 获取页面的所有 frames 包括顶级页面和 iframe
@@ -69,11 +73,15 @@ async function goto(url) {
   await iframe.waitForSelector('#UncompleteTab > div > table:nth-child(2) > tbody > tr > td:nth-child(2) > a');
   // 在 iframe 内点击该元素
   await iframe.click('#UncompleteTab > div > table:nth-child(2) > tbody > tr > td:nth-child(2) > a');
-  await sleep(6)
+  await sleep(3)
 
   setTimeout(async () => {
     // 切换到最新打开的页面
     let newPage = await pages[pages.length - 1];
+    
+    // 设置页面的默认超时时间为 60 秒（60000 毫秒）
+    newPage.setDefaultTimeout(60000); // 60 秒
+    
     await newPage.setViewport({
       width: 1200,
       height: 800,
@@ -89,10 +97,14 @@ async function goto(url) {
     // 点击未生效，暂时需要手工跳过
     await newPage.click('#accessorymanagement')
     console.log('点击附件管理')
-    await sleep(5)
+    await sleep(3)
     setTimeout(async ()=>{
       let p = await pages[pages.length - 1];
       const uploadpage = p
+      
+      // 设置页面的默认超时时间为 60 秒（60000 毫秒）
+      uploadpage.setDefaultTimeout(60000); // 60 秒
+      
       console.log('当前页面URL:', uploadpage.url());
       await uploadpage.setViewport({
         width: 1200,
@@ -104,16 +116,16 @@ async function goto(url) {
       // 点击确定按钮
       await dialog.accept();
     })
-      await sleep(2)
+      await sleep(3)
       await uploadpage.waitForSelector('#table3 > tbody > tr > td > form > input[type=file]:nth-child(1)')
       console.log('找到文件上传了')
-      await sleep(5)
+      await sleep(3)
       const [fileChooser] = await Promise.all([
         uploadpage.waitForFileChooser(),
         uploadpage.click('#table3 > tbody > tr > td > form > input[type=file]:nth-child(1)'), // some button that triggers file selection
       ]);
       await fileChooser.accept(['/Users/xwp/Desktop/test/puppeteer/1.jpg']);
-      await sleep(2)
+      await sleep(3)
       await uploadpage.click('#table3 > tbody > tr > td > form > input[type=submit]:nth-child(2)')
       console.log('文件已上传')
 
